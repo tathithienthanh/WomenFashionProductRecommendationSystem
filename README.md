@@ -1,7 +1,7 @@
 # Women Fashion's Product Recommender System
 A project for Capstone Project Subject and Graduation Thesis Subject of a fourth-year university student. (Not yet completed)
 
-*Time: 2024 - present*
+*Time: Sept 2024 - present*
 
 # Abstract
 With the rapid growth of e-commerce, the demand for online fashion shopping, particularly in women's fashion, has significantly increased. However, the huge amount of information available has led to information overload, making it confusing for customers to make purchasing decisions. The aim of this project is to solve the challenge that customers are facing in making decisions on e-commerce platforms. The project consists of two main parts: collecting and analyzing data to evaluate current shopping trends and designing a recommendation system to assist customers in selecting suitable products.
