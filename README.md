@@ -1,4 +1,4 @@
-# Women Fashion's Product Recommender System
+# Women's Fashion Product Recommendation System
 A project for Capstone Project Subject and Graduation Thesis Subject of a fourth-year university student. (Not yet completed)
 
 *Time: Sept 2024 - present*
