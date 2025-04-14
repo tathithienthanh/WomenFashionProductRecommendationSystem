@@ -25,6 +25,7 @@ With the rapid growth of e-commerce, the demand for online fashion shopping, par
 
 # Reports
 * The official Major Project report *(approved and graded by the IT Faculty of Ho Chi Minh City Open University)* is available in `*.pdf` format as `Official_BC_DAN.pdf`.
+* Images used in reports are stored in folder `Images`.
 
 # Usage
 To use this project, ensure you update file paths if you intend to import or load datasets using the provided code.
