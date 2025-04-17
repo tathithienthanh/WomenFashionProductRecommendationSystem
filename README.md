@@ -20,8 +20,9 @@ With the rapid growth of e-commerce, the demand for online fashion shopping, par
 
 **Graduation Thesis**
 * All the data are collected by scraping real data from websites.
-* The code for both scraping data and analyzing data progress is in `GraduationThesis_2025/collect_analysis_data.ipynb`.
-* Collected data are stored in `*.csv` and `*.txt` formats.
+* The code for both scraping data progress is stored in `GraduationThesis_2025/crawl_data.ipynb`.
+* The code for scraping data and visualizing data progresses are stored in `GraduationThesis_2025/preprocessing_data.ipynb`.
+* Collected data are stored in `*.csv` formats.
 
 # Reports
 * The official Major Project report *(approved and graded by the IT Faculty of Ho Chi Minh City Open University)* is available in `*.pdf` format as `Official_BC_DAN.pdf`.
