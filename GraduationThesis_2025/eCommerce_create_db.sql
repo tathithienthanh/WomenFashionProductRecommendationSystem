@@ -82,7 +82,7 @@ CREATE TABLE Review (
     customer_id VARCHAR(50),
     product_id VARCHAR(50),
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-    content VARCHAR(255),
+    content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (customer_id, product_id, created_at),
     FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE,

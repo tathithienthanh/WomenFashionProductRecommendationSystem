@@ -144,7 +144,7 @@ CREATE TRIGGER secure_admin_password_before_insert
 BEFORE INSERT ON admin
 FOR EACH ROW
 BEGIN
-    CALL validate_password(NEW.password);
+    CALL ValidatePassword(NEW.password);
 END//
 DELIMITER ;
 
@@ -154,7 +154,7 @@ BEFORE UPDATE ON admin
 FOR EACH ROW
 BEGIN
     IF NEW.password <> OLD.password THEN
-        CALL validate_password(NEW.password);
+        CALL ValidatePassword(NEW.password);
     END IF;
 END//
 DELIMITER ;
@@ -164,7 +164,7 @@ CREATE TRIGGER secure_customer_password_before_insert
 BEFORE INSERT ON customer
 FOR EACH ROW
 BEGIN
-    CALL validate_password(NEW.password);
+    CALL ValidatePassword(NEW.password);
 END//
 DELIMITER ;
 
@@ -174,7 +174,7 @@ BEFORE UPDATE ON customer
 FOR EACH ROW
 BEGIN
     IF NEW.password <> OLD.password THEN
-        CALL validate_password(NEW.password);
+        CALL ValidatePassword(NEW.password);
     END IF;
 END//
 DELIMITER ;

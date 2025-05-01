@@ -132,27 +132,38 @@ END//
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE ChangePassword (IN user_type ENUM('admin', 'customer'), IN p_user_id VARCHAR(50), IN old_password VARCHAR(255), IN new_password VARCHAR(255))
+CREATE PROCEDURE ValidatePassword (INOUT p_password VARCHAR(255))
 BEGIN
-    DECLARE current_password VARCHAR(255);
-    
-    IF p_user_type = 'admin' THEN
-        SELECT password INTO current_password FROM Admin WHERE admin_id = p_user_id;
-    ELSE
-        SELECT password INTO current_password FROM Customer WHERE customer_id = p_user_id;
+    DECLARE is_valid BOOLEAN DEFAULT TRUE;
+    DECLARE error_message VARCHAR(255) DEFAULT '';
+
+    IF LENGTH(p_password) < 8 THEN
+        SET is_valid = FALSE;
+        SET error_message = CONCAT(error_message, 'Mật khẩu phải có ít nhất 8 ký tự. ');
     END IF;
-    
-    IF current_password != SHA2(old_password, 256) THEN
+
+    IF p_password NOT REGEXP '[0-9]' THEN
+        SET is_valid = FALSE;
+        SET error_message = CONCAT(error_message, 'Mật khẩu phải chứa ít nhất 1 số. ');
+    END IF;
+
+    IF p_password NOT REGEXP '[A-Za-z]' THEN
+        SET is_valid = FALSE;
+        SET error_message = CONCAT(error_message, 'Mật khẩu phải chứa ít nhất 1 chữ cái. ');
+    END IF;
+
+    IF p_password NOT REGEXP '[!@#$%^&*(),.?":{}|<>]' THEN
+        SET is_valid = FALSE;
+        SET error_message = CONCAT(error_message, 'Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt. ');
+    END IF;
+
+    IF NOT is_valid THEN
         SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Mật khẩu cũ không chính xác';
+        SET MESSAGE_TEXT = error_message;
     END IF;
-    
-    IF p_user_type = 'admin' THEN
-        UPDATE Admin SET password = SHA2(p_new_password, 256) WHERE admin_id = p_user_id;
-    ELSE
-        UPDATE Customer SET password = SHA2(p_new_password, 256) WHERE customer_id = p_user_id;
-    END IF;
-END //
+
+    SET p_password = SHA2(p_password, 256);
+END//
 DELIMITER ;
 
 DELIMITER //
