@@ -38,9 +38,7 @@ CREATE TABLE Admin (
     last_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    permission VARCHAR(50),
-    FOREIGN KEY (permission) REFERENCES Permission (permission_id)
+    password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Product (
@@ -49,12 +47,26 @@ CREATE TABLE Product (
     description VARCHAR(255),
     price DOUBLE NOT NULL,
     quantity INT NOT NULL,
-    category VARCHAR(50),
     image_url VARCHAR(255),
     discount DOUBLE,
     sold INT NOT NULL,
-    rating FLOAT,
-    FOREIGN KEY (category) REFERENCES Category (category_id)
+    rating FLOAT
+);
+
+CREATE TABLE AdminHasPermissions (
+	permission_id VARCHAR(50),
+    admin_id VARCHAR(50),
+    PRIMARY KEY (permission_id, admin_id),
+    FOREIGN KEY (permission_id) REFERENCES Permission(permission_id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES Admin(admin_id) ON DELETE CASCADE
+);
+
+CREATE TABLE ProductHasCategories (
+	category_id VARCHAR(50),
+    product_id VARCHAR(50),
+    PRIMARY KEY (category_id, product_id),
+    FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE
 );
 
 CREATE TABLE Cart (
