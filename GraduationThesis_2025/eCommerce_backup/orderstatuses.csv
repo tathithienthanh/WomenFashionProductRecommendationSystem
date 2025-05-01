@@ -1,0 +1,6 @@
+status_id,description
+PENDING,Chờ xác nhận
+CONFIRMED,Đã xác nhận
+PROCESSING,Đang xử lý
+SHIPPED,Đã gaio hàng
+CANCELLED,Đã hủy đơn

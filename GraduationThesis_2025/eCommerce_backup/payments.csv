@@ -1,0 +1,5 @@
+payment_id,description
+COD,thanh toán khi nhận hàng
+CREDIT_CARD,thẻ tín dụng
+BANK_TRANSFER,chuyển khoản ngân hàng
+E_WALLET,ví điện tử

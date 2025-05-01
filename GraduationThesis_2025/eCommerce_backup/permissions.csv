@@ -1,0 +1,9 @@
+permission_id,description
+MANAGE_USERS,Quản lý người dùng
+MANAGE_PRODUCTS,Quản lý sản phẩm
+MANAGE_ORDERS,Xử lý đơn hàng
+MANAGE_REVIEWS,Quản lý đánh giá
+MANAGE_CATEGORIES,Quản lý danh mục sản phẩm
+VIEW_REPORT,Xem các báo cáo phân tích/thống kê
+MANAGE_PERMISSIONS,Phân quyền quản trị
+VIEW_LOGS,Xem lịch sử hoạt động
