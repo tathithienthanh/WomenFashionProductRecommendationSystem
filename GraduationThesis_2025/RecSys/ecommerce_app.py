@@ -60,7 +60,7 @@ search_query = st.text_input("🔍 Tìm kiếm sản phẩm", "")
 
 # Bộ lọc danh mục
 categories = df_top['category_description'].unique()
-selected_categories = st.multiselect("🔖 Lọc theo danh mục", categories, default=categories)
+selected_categories = st.multiselect("🔖 Lọc theo loại sản phẩm", categories, default=categories)
 
 # Bộ lọc số sao
 if not df_top.empty:
