@@ -4,24 +4,13 @@ import pandas as pd
 import pymysql
 import os
 
-# Giao diện cho Sign In và Log In
-st.markdown("""
-    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px;">
-        <form action="?signin=true" method="get">
-            <button style="padding: 6px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Sign In</button>
-        </form>
-        <form action="?login=true" method="get">
-            <button style="padding: 6px 12px; background-color: #2196F3; color: white; border: none; border-radius: 5px;">Log In</button>
-        </form>
-    </div>
-""", unsafe_allow_html=True)
-
-# Đọc query parameters mới
-query_params = st.query_params
-if "signin" in query_params:
-    st.switch_page("pages/signin_app.py")
-elif "login" in query_params:
-    st.switch_page("pages/login_app.py")
+col1, col2 = st.columns([1, 1], gap="small")
+with col1:
+    if st.button("Sign In", key="signin_btn", type="primary"):
+        st.switch_page("pages/1_signin.py")
+with col2:
+    if st.button("Log In", key="login_btn", type="primary"):
+        st.switch_page("pages/2_login.py")
 
 # Kết nối tới MySQL và lấy dữ liệu sản phẩm
 try:
