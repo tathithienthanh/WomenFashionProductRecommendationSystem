@@ -47,7 +47,7 @@ with st.form("login_form"):
                 st.session_state["customer_id"] = customer_id
                 st.session_state["logged_in_user"] = user
                 st.success("🎉 Đăng nhập thành công!")
-                # st.switch_page("home_app.py")
+                st.switch_page("pages/5_home.py")
             else:
                 st.error("❌ Sai ID hoặc mật khẩu. Vui lòng thử lại.")
 

@@ -70,7 +70,7 @@ else:
         with col4:
             if st.button("❌ Xóa", key=f"remove_{item['product_id']}"):
                 remove_from_cart(customer_id, item['product_id'])
-                st.experimental_rerun()
+                st.rerun()
 
     st.markdown("---")
     st.subheader(f"**Tổng tiền: {total:,.0f} đ**")
