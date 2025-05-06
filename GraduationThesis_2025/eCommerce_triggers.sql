@@ -179,35 +179,35 @@ BEGIN
 END//
 DELIMITER ;
 
-DELIMITER //
-CREATE TRIGGER prevent_change_activitylog_before_insert
-BEFORE INSERT ON ActivityLog
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'ActivityLog chỉ cho phép ghi từ hệ thống!';
-END //
-DELIMITER ;
+-- DELIMITER //
+-- CREATE TRIGGER prevent_change_activitylog_before_insert
+-- BEFORE INSERT ON ActivityLog
+-- FOR EACH ROW
+-- BEGIN
+--     SIGNAL SQLSTATE '45000'
+--     SET MESSAGE_TEXT = 'ActivityLog chỉ cho phép ghi từ hệ thống!';
+-- END //
+-- DELIMITER ;
 
-DELIMITER //
-CREATE TRIGGER prevent_change_activitylog_before_update
-BEFORE INSERT ON ActivityLog
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'ActivityLog chỉ cho phép ghi từ hệ thống!';
-END //
-DELIMITER ;
+-- DELIMITER //
+-- CREATE TRIGGER prevent_change_activitylog_before_update
+-- BEFORE INSERT ON ActivityLog
+-- FOR EACH ROW
+-- BEGIN
+--     SIGNAL SQLSTATE '45000'
+--     SET MESSAGE_TEXT = 'ActivityLog chỉ cho phép ghi từ hệ thống!';
+-- END //
+-- DELIMITER ;
 
-DELIMITER //
-CREATE TRIGGER prevent_change_activitylog_before_delete
-BEFORE DELETE ON ActivityLog
-FOR EACH ROW
-BEGIN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'ActivityLog chỉ cho phép ghi từ hệ thống!';
-END //
-DELIMITER ;
+-- DELIMITER //
+-- CREATE TRIGGER prevent_change_activitylog_before_delete
+-- BEFORE DELETE ON ActivityLog
+-- FOR EACH ROW
+-- BEGIN
+--     SIGNAL SQLSTATE '45000'
+--     SET MESSAGE_TEXT = 'ActivityLog chỉ cho phép ghi từ hệ thống!';
+-- END //
+-- DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER check_product_discount_before_insert
