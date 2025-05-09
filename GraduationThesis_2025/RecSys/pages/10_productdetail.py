@@ -1,7 +1,6 @@
 import streamlit as st
 import pymysql
 
-# --- Kết nối DB ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -11,14 +10,12 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Lấy danh sách sản phẩm ---
 def get_all_products():
     conn = get_connection()
     with conn.cursor() as cursor:
         cursor.execute("SELECT product_id, name FROM Product")
         return cursor.fetchall()
 
-# --- Lấy chi tiết sản phẩm ---
 def get_product_detail(product_id):
     conn = get_connection()
     with conn.cursor() as cursor:
@@ -35,7 +32,6 @@ def get_product_detail(product_id):
     conn.close()
     return product, categories
 
-# --- Thêm vào giỏ hàng ---
 def add_to_cart(customer_id, product_id, quantity=1):
     conn = get_connection()
     with conn.cursor() as cursor:
@@ -59,7 +55,6 @@ def add_to_cart(customer_id, product_id, quantity=1):
     conn.commit()
     conn.close()
 
-# --- Lấy đánh giá sản phẩm ---
 def get_product_reviews(product_id):
     conn = get_connection()
     with conn.cursor() as cursor:
@@ -73,7 +68,6 @@ def get_product_reviews(product_id):
     conn.close()
     return reviews
 
-# --- Giao diện ---
 st.title("📦 Chi tiết sản phẩm")
 
 product_list = get_all_products()
@@ -100,7 +94,6 @@ if selected:
     else:
         st.markdown("**Danh mục:** (Không có)")
 
-    # Nút thêm vào giỏ
     if st.button("🛒 Thêm vào giỏ hàng"):
         if "customer_id" not in st.session_state or st.session_state["customer_id"] is None:
             st.warning("🔒 Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.")
@@ -108,7 +101,6 @@ if selected:
             add_to_cart(st.session_state["customer_id"], product_id)
             st.success("✅ Đã thêm vào giỏ hàng!")
 
-    # --- Hiển thị đánh giá ---
     st.markdown("---")
     st.subheader("📝 Đánh giá từ người mua")
 

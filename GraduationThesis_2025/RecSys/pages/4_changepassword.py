@@ -2,7 +2,6 @@ import streamlit as st
 import pymysql
 import hashlib
 
-# --- Hàm kết nối cơ sở dữ liệu ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -12,11 +11,9 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Hàm băm mật khẩu (dùng để so sánh) ---
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# --- Hàm lấy thông tin người dùng theo customer_id ---
 def get_user_by_id(customer_id):
     conn = get_connection()
     try:
@@ -26,7 +23,6 @@ def get_user_by_id(customer_id):
     finally:
         conn.close()
 
-# --- Hàm cập nhật mật khẩu mới ---
 def update_customer_password(customer_id, new_password):
     conn = get_connection()
     try:
@@ -36,7 +32,6 @@ def update_customer_password(customer_id, new_password):
     finally:
         conn.close()
 
-# --- Giao diện ---
 st.title("🔑 Đổi mật khẩu")
 
 if "customer_id" not in st.session_state:
@@ -47,7 +42,6 @@ if "customer_id" not in st.session_state:
 if "step_change" not in st.session_state:
     st.session_state.step_change = 1
 
-# --- Bước 1: Xác thực mật khẩu hiện tại ---
 if st.session_state.step_change == 1:
     with st.form("current_pass_form"):
         current_pass = st.text_input("🔒 Nhập mật khẩu hiện tại", type="password")
@@ -61,7 +55,6 @@ if st.session_state.step_change == 1:
             else:
                 st.error("❌ Mật khẩu hiện tại không đúng.")
 
-# --- Bước 2: Nhập mật khẩu mới ---
 elif st.session_state.step_change == 2:
     with st.form("new_pass_form"):
         new_pass = st.text_input("🔐 Nhập mật khẩu mới", type="password")
@@ -75,7 +68,6 @@ elif st.session_state.step_change == 2:
                 st.error("❌ Mật khẩu xác nhận không khớp.")
             else:
                 try:
-                    # KHÔNG hash ở đây — trigger trong DB sẽ xử lý
                     update_customer_password(st.session_state.customer_id, new_pass)
                     st.success("✅ Cập nhật mật khẩu thành công.")
                     st.info("🔁 Vui lòng đăng nhập lại.")

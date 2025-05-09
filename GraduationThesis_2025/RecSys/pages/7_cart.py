@@ -1,7 +1,6 @@
 import streamlit as st
 import pymysql
 
-# --- Hàm kết nối CSDL ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -11,7 +10,6 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Hàm lấy giỏ hàng của khách hàng ---
 def fetch_cart(customer_id):
     try:
         conn = get_connection()
@@ -26,7 +24,6 @@ def fetch_cart(customer_id):
     finally:
         conn.close()
 
-# --- Hàm xóa sản phẩm khỏi giỏ hàng ---
 def remove_from_cart(customer_id, product_id):
     try:
         conn = get_connection()
@@ -39,18 +36,14 @@ def remove_from_cart(customer_id, product_id):
     finally:
         conn.close()
 
-# --- Kiểm tra đăng nhập ---
 if "logged_in_user" not in st.session_state:
-    # st.warning("Vui lòng đăng nhập để xem giỏ hàng.")
-    # st.stop()
-    customer_id = 'C002'
+    st.warning("Vui lòng đăng nhập để xem giỏ hàng.")
+    st.stop()
 else:
     customer_id = st.session_state["customer_id"]
 
-# --- Tiêu đề ---
 st.title("🛒 Giỏ hàng của bạn")
 
-# --- Hiển thị giỏ hàng ---
 cart_items = fetch_cart(customer_id)
 
 if not cart_items:
@@ -75,6 +68,5 @@ else:
     st.markdown("---")
     st.subheader(f"**Tổng tiền: {total:,.0f} đ**")
 
-    # (Tùy chọn) Nút đặt hàng
     if st.button("🧾 Tiến hành đặt hàng"):
         st.switch_page('pages/9_order.py')

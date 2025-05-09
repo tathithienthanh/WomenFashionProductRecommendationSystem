@@ -140,7 +140,6 @@ payment_options = {p['description']: p['payment_id'] for p in payments}
 selected_description = st.selectbox("Phương thức thanh toán", list(payment_options.keys()))
 selected_payment_id = payment_options[selected_description]
 
-# --- Đặt hàng ---
 if st.button("✅ Xác nhận đặt hàng"):
     order_id = place_order(customer_id, cart_items, selected_payment_id)
     st.success(f"🎉 Đơn hàng #{order_id} đã được đặt thành công với phương thức thanh toán **{selected_description}**!")

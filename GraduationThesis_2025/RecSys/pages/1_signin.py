@@ -2,7 +2,6 @@ import streamlit as st
 import random
 import pymysql
 
-# --- Khởi tạo session state ---
 if "step" not in st.session_state:
     st.session_state.step = 1
 if "confirm_code" not in st.session_state:
@@ -12,7 +11,6 @@ if "form_data" not in st.session_state:
 if "resend_requested" not in st.session_state:
     st.session_state.resend_requested = False
 
-# --- Hàm kết nối DB ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -22,7 +20,6 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Kiểm tra email đã tồn tại ---
 def email_exists(email):
     try:
         conn = get_connection()
@@ -32,7 +29,6 @@ def email_exists(email):
     finally:
         conn.close()
 
-# --- Thêm người dùng mới ---
 def insert_user(last_name, first_name, email, password, phone_number, address):
     try:
         conn = get_connection()
@@ -53,12 +49,10 @@ def insert_user(last_name, first_name, email, password, phone_number, address):
     finally:
         conn.close()
 
-# --- Reset mã xác nhận ---
 def reset_code():
     st.session_state.confirm_code = str(random.randint(100000, 999999))
     st.session_state.resend_requested = False
 
-# --- Bước 1: Giao diện đăng ký ---
 if st.session_state.step == 1:
     st.title("📝 Đăng ký tài khoản")
 
@@ -95,7 +89,6 @@ if st.session_state.step == 1:
                 st.session_state.step = 2
                 st.rerun()
 
-# --- Bước 2: Xác nhận mã ---
 elif st.session_state.step == 2:
     st.success("✅ Mã xác nhận đã gửi tới email (giả lập).")
     st.info(f"🔑 Mã xác nhận của bạn là: **{st.session_state.confirm_code}**")
@@ -121,7 +114,6 @@ elif st.session_state.step == 2:
         st.session_state.resend_requested = True
         st.rerun()
 
-# --- Bước 3: Thành công ---
 elif st.session_state.step == 3:
     st.balloons()
     st.success("🎉 Đăng ký thành công!")

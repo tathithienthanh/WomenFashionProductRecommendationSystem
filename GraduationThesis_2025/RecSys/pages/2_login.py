@@ -2,7 +2,6 @@ import streamlit as st
 import pymysql
 import hashlib
 
-# --- Hàm kết nối cơ sở dữ liệu ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -12,11 +11,9 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Hàm băm mật khẩu ---
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# --- Hàm kiểm tra thông tin đăng nhập ---
 def validate_login(customer_id, password):
     hashed = hash_password(password)
     try:
@@ -30,7 +27,6 @@ def validate_login(customer_id, password):
     finally:
         conn.close()
 
-# --- Giao diện đăng nhập ---
 st.title("🔐 Đăng nhập hệ thống")
 
 with st.form("login_form"):
@@ -51,7 +47,6 @@ with st.form("login_form"):
             else:
                 st.error("❌ Sai ID hoặc mật khẩu. Vui lòng thử lại.")
 
-# --- Nút quên mật khẩu ---
 st.markdown("---")
 if st.button("❓ Quên mật khẩu?"):
     st.switch_page("pages/3_forgetpassword.py")

@@ -6,7 +6,6 @@ import pymysql
 from functools import lru_cache
 import logging
 
-# Cấu hình logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,7 @@ class ItemItemRecommender:
             index=item_matrix.index,
             columns=item_matrix.index
         )
-        logger.info("Tính toán ma trận tương đồng sản phẩm xong.")
+        logger.info("Tính toán ma trận tương đồng xong.")
 
     def recommend_items(self, customer_id: str, top_k: int = 5) -> List[str]:
         if self.similarity_matrix is None:
@@ -70,9 +69,6 @@ class ItemItemRecommender:
 
         similar_items = self.similarity_matrix[product_id].sort_values(ascending=False)
         return similar_items.drop(index=product_id, errors='ignore').head(top_k).index.tolist()
-
-
-# ----------- Hàm tiện ích -----------
 
 @lru_cache(maxsize=1)
 def get_connection():

@@ -2,7 +2,6 @@ import streamlit as st
 import pymysql
 import hashlib
 
-# --- Hàm kết nối cơ sở dữ liệu ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -12,11 +11,9 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Hàm băm mật khẩu ---
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# --- Hàm kiểm tra đăng nhập admin ---
 def validate_admin_login(admin_id, password):
     hashed = hash_password(password)
     try:
@@ -30,7 +27,6 @@ def validate_admin_login(admin_id, password):
     finally:
         conn.close()
 
-# --- Giao diện đăng nhập Admin ---
 st.title("🛠️ Đăng nhập quản trị viên")
 
 with st.form("admin_login_form"):

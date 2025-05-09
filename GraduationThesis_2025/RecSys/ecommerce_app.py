@@ -48,21 +48,16 @@ finally:
     if 'conn' in locals() and conn.open:
         conn.close()
 
-# Xử lý trùng lặp sản phẩm
 df_top = df_top.drop_duplicates(subset='product_id')
 
-# Khởi tạo số lượng sản phẩm hiển thị mặc định
 if 'visible_count' not in st.session_state:
     st.session_state.visible_count = 10
 
-# Bộ lọc tìm kiếm
 search_query = st.text_input("🔍 Tìm kiếm sản phẩm", "")
 
-# Bộ lọc danh mục
 categories = df_top['category_description'].unique()
 selected_categories = st.multiselect("🔖 Lọc theo loại sản phẩm", categories, default=categories)
 
-# Bộ lọc số sao
 if not df_top.empty:
     min_rating_value = df_top['avg_rating'].min()
     max_rating_value = df_top['avg_rating'].max()
@@ -75,7 +70,6 @@ if not df_top.empty:
         step=0.1
     )
 
-# Bộ lọc giá
 min_price, max_price = st.slider(
     "💰 Lọc theo giá",
     min_value=int(df_top['discounted_price'].min()),
@@ -83,7 +77,6 @@ min_price, max_price = st.slider(
     value=(int(df_top['discounted_price'].min()), int(df_top['discounted_price'].max()))
 )
 
-# Áp dụng bộ lọc
 if not df_top.empty:
     if search_query:
         df_top = df_top[df_top['product_name'].str.contains(search_query, case=False, na=False)]
@@ -94,7 +87,6 @@ if not df_top.empty:
     df_top = df_top[(df_top['avg_rating'] >= min_rating) & (df_top['avg_rating'] <= max_rating)]
     df_top = df_top[(df_top['discounted_price'] >= min_price) & (df_top['discounted_price'] <= max_price)]
 
-# Hiển thị dữ liệu sản phẩm
 if not df_top.empty:
     st.title("🛒 Sản Phẩm Hot!!!")
 

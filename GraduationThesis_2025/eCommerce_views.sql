@@ -27,7 +27,8 @@ CREATE VIEW CustomerOrderHistory AS
     
 CREATE VIEW LowInventory AS
 	SELECT * FROM Product 
-	WHERE quantity < 10;
+	WHERE quantity < 10
+    ORDER BY p.quantity;
     
 CREATE VIEW TopSellingProducts AS
 	SELECT p.product_id, p.name AS product_name, p.price, p.discount, p.quantity AS stock, p.sold AS total_sold, ROUND(p.price * (1 - IFNULL(p.discount, 0)), 2) AS discounted_price, 
@@ -52,9 +53,3 @@ CREATE VIEW ProductReviewsSummary AS
     LEFT JOIN Review r ON p.product_id = r.product_id
     GROUP BY p.product_id, p.name
     ORDER BY avg_rating DESC, total_reviews DESC;
-    
-CREATE VIEW LowQuantityProducts AS
-	SELECT p.product_id, p.name AS product_name, p.quantity, p.sold
-	FROM Product p
-	WHERE p.quantity < 10
-	ORDER BY p.quantity

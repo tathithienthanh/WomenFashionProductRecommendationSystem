@@ -3,7 +3,6 @@ import pymysql
 import random
 import string
 
-# --- Hàm kết nối cơ sở dữ liệu ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -13,7 +12,6 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Hàm kiểm tra email có tồn tại không ---
 def get_customer_by_email(email):
     conn = get_connection()
     try:
@@ -23,7 +21,6 @@ def get_customer_by_email(email):
     finally:
         conn.close()
 
-# --- Hàm cập nhật mật khẩu mới (plain, để trigger xử lý hash) ---
 def update_customer_password(customer_id, new_password):
     conn = get_connection()
     try:
@@ -33,11 +30,13 @@ def update_customer_password(customer_id, new_password):
     finally:
         conn.close()
 
-# --- Hàm tạo mã xác nhận ---
 def generate_code(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
-# --- Khởi tạo trạng thái ---
+if "customer_id" not in st.session_state:
+    st.warning("⚠️ Vui lòng đăng nhập để sử dụng chức năng này.")
+    st.stop()
+
 if "step" not in st.session_state:
     st.session_state.step = 1
 if "confirm_code" not in st.session_state:
@@ -45,10 +44,8 @@ if "confirm_code" not in st.session_state:
 if "customer_id" not in st.session_state:
     st.session_state.customer_id = None
 
-# --- Giao diện ---
 st.title("🔐 Quên mật khẩu")
 
-# --- Bước 1: Nhập email ---
 if st.session_state.step == 1:
     with st.form("email_form"):
         email = st.text_input("📧 Nhập email đã đăng ký:")
@@ -65,7 +62,6 @@ if st.session_state.step == 1:
             else:
                 st.error("❌ Email không tồn tại.")
 
-# --- Bước 2: Nhập mã xác nhận ---
 elif st.session_state.step == 2:
     st.success("✅ Mã xác nhận đã gửi tới email (giả lập).")
     st.info(f"🔑 Mã xác nhận của bạn là: **{st.session_state.confirm_code}**")
@@ -86,7 +82,6 @@ elif st.session_state.step == 2:
         st.success("✅ Mã mới đã được tạo.")
         st.rerun()
 
-# --- Bước 3: Nhập mật khẩu mới ---
 elif st.session_state.step == 3:
     with st.form("new_pass_form"):
         new_pass = st.text_input("🔐 Nhập mật khẩu mới:", type="password")
@@ -106,7 +101,6 @@ elif st.session_state.step == 3:
                 except pymysql.err.OperationalError as e:
                     st.error(f"❌ Lỗi: {e.args[1]}")
 
-# --- Bước 4: Hoàn tất ---
 elif st.session_state.step == 4:
     st.success("✅ Bạn đã đổi mật khẩu thành công. Vui lòng đăng nhập lại.")
     if st.button("🔙 Quay lại trang đăng nhập"):

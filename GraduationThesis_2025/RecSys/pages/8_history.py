@@ -2,7 +2,6 @@ import streamlit as st
 import pymysql
 import pandas as pd
 
-# --- Hàm kết nối CSDL ---
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -12,7 +11,6 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Lấy tất cả trạng thái đơn hàng ---
 def get_all_order_status():
     conn = get_connection()
     try:
@@ -22,7 +20,6 @@ def get_all_order_status():
     finally:
         conn.close()
 
-# --- Lấy lịch sử đơn hàng (có lọc) ---
 def get_order_history(customer_id, selected_status):
     conn = get_connection()
     try:
@@ -54,21 +51,18 @@ def get_order_history(customer_id, selected_status):
     finally:
         conn.close()
 
-# --- Giao diện chính ---
 st.title("📜 Lịch sử mua hàng")
 
 if "customer_id" not in st.session_state:
     st.warning("⚠️ Vui lòng đăng nhập để xem lịch sử đơn hàng.")
     st.stop()
 
-# --- Lọc theo trạng thái đơn hàng ---
 statuses = get_all_order_status()
 status_options = ["Tất cả"] + [s["description"] for s in statuses]
 selected_status = st.selectbox("📌 Lọc theo trạng thái đơn hàng:", status_options)
 
 orders = get_order_history(st.session_state.customer_id, selected_status)
 
-# --- Hiển thị kết quả ---
 if orders:
     df = pd.DataFrame(orders)
     df["order_date"] = pd.to_datetime(df["order_date"]).dt.strftime("%d/%m/%Y %H:%M")
