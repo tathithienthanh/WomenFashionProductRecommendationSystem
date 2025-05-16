@@ -3,7 +3,7 @@ A project for Major Project Subject and Graduation Thesis Subject at the univers
 
 *Time:* 
   * *Major project (đồ án ngành): Sept 2024 - Jan 2025*
-  * *Graduation Thesis (khóa luận tốt nghiệp): Feb 2025 - present*
+  * *Graduation Thesis (khóa luận tốt nghiệp): Feb 2025 - May 2025*
 
 *Language: Vietnamese*
 
@@ -23,9 +23,23 @@ With the rapid growth of e-commerce, the demand for online fashion shopping, par
 * The code for both scraping data progress is stored in `GraduationThesis_2025/crawl_data.ipynb`.
 * The code for scraping data and visualizing data progresses are stored in `GraduationThesis_2025/preprocessing_data.ipynb`.
 * Collected data are stored in `*.csv` formats.
+  * The raw product data is stored as `getdata/thoi_trang_nu.csv`.
+  * The cleaned version is stored as `getdata/combined_data.csv`.
+  * Product reviews extracted from the site are stored in `getcomment/combined_data.csv`.
+* Collected images are stored in `GraduationThesis_2025/getImages` folder as `*.jpg` files.
+* There is a place-holder image named as `placeholder.jpg` for alternative when there is any trouble with the image.
+* The code for creating the database and attached triggers, procedures, views are stored in `*.sql` formats.
+* Backup database files are stored in `GraduationThesis_2025/db_backup_mysql.zip`.
+* If you use the backup file, you do not need to run the `*.sql` scripts manually.
+* Preprocessed and visualized data are also backed up in `backup/df_product.csv` and `backup/df_cmt.csv` in case of data loss.
+* Due to privacy constraints, actual customer data from the e-commerce platform is not available.
+  * All customer-related and user-related data used in this project are random generated for demonstration and evaluation of the recommendation system.
+  * The folder `eCommerce_backup` contains 13 `*.csv` files corresponding to 13 database tables on the database.
+* Folder `RecSys` contains `*.py` files for the eCommerce recommendation system.
 
 # Reports
 * The official Major Project report *(approved and graded by the IT Faculty of Ho Chi Minh City Open University)* is available in `*.pdf` format as `Official_BC_DAN.pdf`.
+* The official Graduation Thesis report is available in `*.pdf` format as `BC_KLTN.pdf`.
 * Images used in reports are stored in folder `Images`.
 
 # Usage
@@ -38,6 +52,8 @@ To use this project, ensure you update file paths if you intend to import or loa
 * Natural Language Processing (NLP): Analyzing customer feedback.
 * Visualization: Generating insights using data visualization.
 * System Design: Designing the architecture for the recommendation system.
+* Web Performance: Streamlit
+* Database: MySQL
   
 # Notes
 * The report included in this repository is for reference purposes only. Please do not edit or reuse it for any other purpose.
