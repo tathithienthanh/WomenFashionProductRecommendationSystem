@@ -114,5 +114,7 @@ if customer:
                 if st.button("🔁 Gửi lại mã"):
                     new_code = str(random.randint(100000, 999999))
                     send_verification_email(new_email, new_code)
+    if st.button("🏠Về trang chủ"):
+        st.switch_page('pages/5_home.py')
 else:
     st.error("Không tìm thấy thông tin khách hàng.")

@@ -158,3 +158,7 @@ with tab3:
                 log_admin_activity(st.session_state.admin_id, f"Xoá sản phẩm: {selected_product_id}")
     else:
         st.info("Không có sản phẩm nào.")
+
+st.markdown("---")
+if st.button("🏠Về trang chủ"):
+    st.switch_page("pages/17_homeadmin.py")

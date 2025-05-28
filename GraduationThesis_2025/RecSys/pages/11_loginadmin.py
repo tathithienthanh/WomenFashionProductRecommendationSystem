@@ -43,6 +43,6 @@ with st.form("admin_login_form"):
                 st.session_state["admin_id"] = admin_id
                 st.session_state["logged_in_admin"] = admin
                 st.success("🎉 Đăng nhập thành công!")
-                st.switch_page("pages/12_report.py")
+                st.switch_page("pages/17_homeadmin.py")
             else:
                 st.error("❌ Sai ID hoặc mật khẩu. Vui lòng thử lại.")

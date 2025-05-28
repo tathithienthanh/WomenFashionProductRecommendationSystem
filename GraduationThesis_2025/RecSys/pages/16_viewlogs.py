@@ -65,3 +65,7 @@ if logs_df.empty:
 else:
     st.dataframe(logs_df, use_container_width=True)
     log_admin_activity(st.session_state.admin_id, 'Xem nhật ký hoạt động của các quản trị viên')
+
+st.markdown("---")
+if st.button("🏠Về trang chủ"):
+    st.switch_page("pages/17_homeadmin.py")

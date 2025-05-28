@@ -148,3 +148,7 @@ with tab3:
                 log_admin_activity(st.session_state.admin_id, 'Xóa thông tin người dùng thành công')
     else:
         st.info("Không có người dùng nào trong hệ thống.")
+
+st.markdown("---")
+if st.button("🏠Về trang chủ"):
+    st.switch_page("pages/17_homeadmin.py")

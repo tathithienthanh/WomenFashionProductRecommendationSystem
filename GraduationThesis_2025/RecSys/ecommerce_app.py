@@ -12,7 +12,44 @@ with col2:
     if st.button("Log In", key="login_btn", type="primary"):
         st.switch_page("pages/2_login.py")
 
-# Kết nối tới MySQL và lấy dữ liệu sản phẩm
+def get_connection():
+    return pymysql.connect(
+        host="localhost",
+        user="root",
+        password="Abcxyz@123",
+        database="eCommerce",
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
+def get_top_products() -> pd.DataFrame:
+    query = """
+        SELECT t.product_id, 
+        t.product_name, 
+        t.discounted_price, 
+        t.total_sold, 
+        t.avg_rating, 
+        p.image_url,
+        c.category_id,
+        c.description AS category_description
+    FROM TopSellingProducts t
+    JOIN Product p ON t.product_id = p.product_id
+    JOIN ProductHasCategories phc ON p.product_id = phc.product_id
+    JOIN Category c ON phc.category_id = c.category_id
+    """
+    try:
+        conn = get_connection()
+        df = pd.read_sql(query, conn)
+        df['rating'] = pd.to_numeric(df['rating'], errors='coerce').fillna(0)
+        df['price'] = pd.to_numeric(df['price'], errors='coerce').fillna(0)
+        df['discount'] = pd.to_numeric(df['discount'], errors='coerce').fillna(0)
+        return df
+    except Exception as e:
+        return pd.DataFrame()
+    finally:
+        if conn and conn.open:
+            conn.close()
+
+
 try:
     image_dir = 'C:/Users/ASUS/Desktop/T/ĐAN_KLTN/getImages'
     placeholder_path = os.path.join(image_dir, 'placeholder.jpg')
@@ -53,6 +90,7 @@ df_top = df_top.drop_duplicates(subset='product_id')
 if 'visible_count' not in st.session_state:
     st.session_state.visible_count = 10
 
+st.markdown("---")
 search_query = st.text_input("🔍 Tìm kiếm sản phẩm", "")
 
 categories = df_top['category_description'].unique()
@@ -110,6 +148,9 @@ if not df_top.empty:
                     st.markdown(f"🔥 Đã bán: {product['total_sold']}")
                     st.markdown(f"⭐ {product['avg_rating']} sao")
                     st.markdown(f"📦 Danh mục: {product['category_description']}")
+                    if st.button("🔎 Chi tiết", key=f"detail_{product['product_id']}"):
+                        st.session_state.selected_product_id = product['product_id']
+                        st.switch_page("pages/10_productdetail.py")
 
     if num_show < len(df_top):
         if st.button("🔽 Click for more"):

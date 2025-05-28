@@ -54,6 +54,9 @@ if st.session_state.step_change == 1:
                 st.rerun()
             else:
                 st.error("❌ Mật khẩu hiện tại không đúng.")
+    
+    if st.button("🏠Về trang chủ"):
+        st.switch_page('pages/5_home.py')
 
 elif st.session_state.step_change == 2:
     with st.form("new_pass_form"):

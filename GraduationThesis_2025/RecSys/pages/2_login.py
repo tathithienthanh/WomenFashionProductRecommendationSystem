@@ -48,5 +48,13 @@ with st.form("login_form"):
                 st.error("❌ Sai ID hoặc mật khẩu. Vui lòng thử lại.")
 
 st.markdown("---")
-if st.button("❓ Quên mật khẩu?"):
-    st.switch_page("pages/3_forgetpassword.py")
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("❓ Quên mật khẩu?"):
+        st.switch_page("pages/3_forgetpassword.py")
+with col2:
+    if st.button("❓ Chưa có tài khoản?"):
+        st.switch_page("pages/1_signin.py")
+
+if st.button("🏠Về trang chủ"):
+        st.switch_page('ecommerce_app.py')

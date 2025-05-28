@@ -70,3 +70,7 @@ else:
 
     if st.button("🧾 Tiến hành đặt hàng"):
         st.switch_page('pages/9_order.py')
+    
+    st.markdown("---")
+    if st.button("🏠Về trang chủ"):
+        st.switch_page('pages/5_home.py')

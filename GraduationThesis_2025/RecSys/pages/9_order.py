@@ -1,9 +1,13 @@
 import streamlit as st
 import pymysql
 import random
+import os
 from datetime import datetime
+from typing import List, Dict
+from NBCF_ItemItem import ItemItemRecommender, recommend_items_for_user, get_connection, load_interaction_data
 
-# --- Kết nối CSDL ---
+placeholder_path = 'C:/Users/ASUS/Desktop/T/ĐAN_KLTN/getImages/placeholder.jpg'
+
 def get_connection():
     return pymysql.connect(
         host="localhost",
@@ -13,7 +17,16 @@ def get_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-# --- Lấy giỏ hàng ---
+def fetch_address(customer_id):
+    try:
+        conn = get_connection()
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT address FROM customer WHERE customer_id = %s", (customer_id,))
+            result = cursor.fetchone()
+            return result["address"] if result else ""
+    finally:
+        conn.close()
+
 def fetch_cart(customer_id):
     try:
         conn = get_connection()
@@ -28,7 +41,6 @@ def fetch_cart(customer_id):
     finally:
         conn.close()
 
-# --- Lấy phương thức thanh toán ---
 def fetch_payment_methods():
     try:
         conn = get_connection()
@@ -38,25 +50,26 @@ def fetch_payment_methods():
     finally:
         conn.close()
 
-# --- Đặt hàng ---
-def place_order(customer_id, cart_items, payment_method):
+def place_order(customer_id, cart_items, payment_method, address):
     try:
         conn = get_connection()
         with conn.cursor() as cursor:
-            # Lấy ID đơn hàng lớn nhất hiện tại
             cursor.execute("SELECT MAX(CAST(SUBSTRING(order_id, 2) AS UNSIGNED)) AS max_id FROM orders")
             result = cursor.fetchone()
             max_order_id = result["max_id"]
             new_order_id = f"O{(max_order_id + 1):04d}" if max_order_id is not None else "O0001"
 
-            # Tạo đơn hàng mới
             cursor.execute(""" 
                 INSERT INTO orders (order_id, customer_id, order_status, order_date, address, total_price, payment)
-                VALUES (%s, %s, 'SHIPPED', NOW(), '', 0, %s)
-            """, (new_order_id, customer_id, payment_method))
+                VALUES (%s, %s, 'PENDING', NOW(), %s, 0, %s)
+            """, (new_order_id, customer_id, address, payment_method))
             
             total = 0
             for item in cart_items:
+                if "product_id" not in item:
+                    print("Lỗi: item không có product_id:", item)
+                    continue 
+
                 total += item["price"] * item["quantity"]
                 cursor.execute("""
                     INSERT INTO orderdetail (order_id, product_id, quantity, unit_price, discount)
@@ -70,7 +83,6 @@ def place_order(customer_id, cart_items, payment_method):
     finally:
         conn.close()
 
-# --- Lấy sản phẩm trong đơn hàng ---
 def get_order_products(order_id):
     try:
         conn = get_connection()
@@ -85,7 +97,6 @@ def get_order_products(order_id):
     finally:
         conn.close()
 
-# --- Thêm đánh giá ---
 def submit_review(customer_id, product_id, rating, content):
     try:
         conn = get_connection()
@@ -98,42 +109,89 @@ def submit_review(customer_id, product_id, rating, content):
     finally:
         conn.close()
 
-# --- Gợi ý ngẫu nhiên sản phẩm ---
-def get_random_products(limit=5):
+def get_random_products(n=5):
+    n = int(n)
     try:
         conn = get_connection()
         with conn.cursor() as cursor:
-            cursor.execute("SELECT product_id, name, price FROM Product")
-            products = cursor.fetchall()
-            return random.sample(products, min(limit, len(products)))
+            query = f'''
+                SELECT p.product_id, p.name, p.price, p.image_url, p.sold, p.rating, GROUP_CONCAT(c.description SEPARATOR ', ') AS category_description
+                FROM product p
+                LEFT JOIN producthascategories pc ON p.product_id = pc.product_id
+                LEFT JOIN category c ON pc.category_id = c.category_id
+                GROUP BY p.product_id
+                ORDER BY RAND()
+                LIMIT {n}
+            '''
+            cursor.execute(query)
+            return cursor.fetchall()
     finally:
         conn.close()
 
-# --- Kiểm tra đăng nhập ---
+def get_similar_products(product_id: str, top_k: int = 5) -> List[Dict]:
+    df = load_interaction_data()
+    if df.empty:
+        return []
+
+    model = ItemItemRecommender(df[['customer_id', 'product_id', 'rating']])
+    model.prepare_matrices()
+    similar_ids = model.get_similar_items(product_id, top_k)
+
+    results = []
+    for pid in similar_ids:
+        row = df[df['product_id'] == pid].iloc[0].to_dict()
+        price = row.get('price', 0)
+        discount = row.get('discount', 0)
+        final_price = price * (1 - discount / 100) if discount else price
+        results.append({
+            "product_id": pid,
+            "name": row.get('name', ''),
+            "image_url": row.get('image_url', ''),
+            "price": price,
+            "discounted_price": final_price,
+            "discount": discount,
+            "sold": row.get('sold', 0),
+            "quantity": row.get('quantity', 0),
+            "rating": row.get('avg_rating', 0),
+            "category": {
+                "id": row.get('category_id'),
+                "description": row.get('category_description', '')
+            }
+        })
+    return results
+
+if st.button("🏠Về trang chủ"):
+    st.switch_page("pages/5_home.py")
+
 if "logged_in_user" not in st.session_state:
     st.warning("Vui lòng đăng nhập để đặt hàng.")
     st.stop()
 
 customer_id = st.session_state["customer_id"]
+st.markdown("---")
 st.title("🧾 Xác nhận đơn hàng")
 
-# --- Hiển thị giỏ hàng ---
 cart_items = fetch_cart(customer_id)
 
 if not cart_items:
-    st.info("Giỏ hàng của bạn đang trống.")
+    st.info("Danh sách các đơn hàng của bạn đang trống.")
     st.stop()
 
-# Hiển thị sản phẩm trong giỏ hàng
 total = 0
 for item in cart_items:
-    st.write(f"- **{item['name']}** x {item['quantity']} = {item['price'] * item['quantity']:,.0f} đ")
+    st.write(f"- **{item['name']}** x {item['quantity']} = {item['price'] * item['quantity']:,.0f} VND")
     total += item['price'] * item['quantity']
 
 st.markdown("---")
-st.subheader(f"**Tổng cộng: {total:,.0f} đ**")
+st.subheader(f"**Tổng cộng: {total:,.0f} VND**")
 
-# --- Chọn phương thức thanh toán ---
+default_address = fetch_address(customer_id)
+use_new_address = st.checkbox("Tôi muốn thay đổi địa chỉ giao hàng")
+if use_new_address:
+    delivery_address = st.text_input("Nhập địa chỉ giao hàng", value=default_address)
+else:
+    delivery_address = default_address
+
 st.markdown("### 💳 Chọn phương thức thanh toán")
 payments = fetch_payment_methods()
 payment_options = {p['description']: p['payment_id'] for p in payments}
@@ -141,28 +199,54 @@ selected_description = st.selectbox("Phương thức thanh toán", list(payment_
 selected_payment_id = payment_options[selected_description]
 
 if st.button("✅ Xác nhận đặt hàng"):
-    order_id = place_order(customer_id, cart_items, selected_payment_id)
+    order_id = place_order(customer_id, cart_items, selected_payment_id, delivery_address)
     st.success(f"🎉 Đơn hàng #{order_id} đã được đặt thành công với phương thức thanh toán **{selected_description}**!")
 
-    st.markdown("---")
-    st.subheader("🛍 Có thể bạn sẽ thích")
+st.markdown("---")
+st.subheader("🛒 Có thể bạn sẽ thích")
+num_cols = 5
 
-    suggested = get_random_products(5)
-    for sp in suggested:
-        st.markdown(f"- **{sp['name']}** - {sp['price']:,.0f} đ")
+product_ids = [item['product_id'] for item in cart_items]
+suggested = []
+for pid in product_ids[:2]:
+    suggested.extend(get_similar_products(pid, 3))
+unique_suggested = {p['product_id']: p for p in suggested}
+suggested = list(unique_suggested.values())[:5]
+print(suggested)
+cols = st.columns(num_cols)
+for idx, p in enumerate(suggested):
+    image_path = p.get('image_url') or placeholder_path
+    if not os.path.exists(image_path):
+        image_path = placeholder_path
 
-    st.markdown("---")
-    st.subheader("✍️ Viết đánh giá sản phẩm")
+    with cols[idx]:
+        st.image(image_path, width=150)
+        st.markdown(f"**{p.get('name', 'Không rõ tên')}**")
+        st.markdown(f"💰 {p.get('discounted_price', p.get('price', 0)):,.0f} VND")
+        st.markdown(f"🔥 Đã bán: {p.get('sold', 'N/A')}")
+        st.markdown(f"⭐ {p.get('rating', 'N/A')} sao")
+        category = p.get('category', {})
+        st.markdown(f"📦 Danh mục: {category.get('description', 'Không rõ')}")
+        if st.button("🔎 Chi tiết", key=f"detail_{p['product_id']}"):
+            st.session_state['selected_product_id'] = p['product_id']
+            st.switch_page("pages/10_productdetail.py")
 
-    products = get_order_products(order_id)
-    for product in products:
-        st.markdown(f"**🧾 {product['name']}**")
 
-        with st.form(f"review_form_{product['product_id']}"):
-            rating = st.slider("Đánh giá (1-5 ⭐)", 1, 5, 5)
-            content = st.text_area("Nội dung đánh giá")
-            submit = st.form_submit_button("Gửi đánh giá")
+suggested = get_random_products(5)
+print(suggested)
+cols = st.columns(num_cols)
+for idx, p in enumerate(suggested):
+    image_path = p.get('image_url') or placeholder_path
+    if not os.path.exists(image_path):
+        image_path = placeholder_path
 
-            if submit:
-                submit_review(customer_id, product['product_id'], rating, content)
-                st.success("🎉 Đánh giá của bạn đã được gửi!")
+    with cols[idx]:
+        st.image(image_path, width=150)
+        st.markdown(f"**{p.get('name', 'Không rõ tên')}**")
+        st.markdown(f"💰 {p.get('discounted_price', p.get('price', 0)):,.0f} VND")
+        st.markdown(f"🔥 Đã bán: {p.get('sold', 'N/A')}")
+        st.markdown(f"⭐ {p.get('rating', 'N/A')} sao")
+        st.markdown(f"📦 Danh mục: {p.get('category_description', {'Không rõ'})}")
+        if st.button("🔎 Chi tiết", key=f"detail_{p['product_id']}"):
+            st.session_state['selected_product_id'] = p['product_id']
+            st.switch_page("pages/10_productdetail.py")

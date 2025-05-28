@@ -61,6 +61,9 @@ if st.session_state.step == 1:
                 st.rerun()
             else:
                 st.error("❌ Email không tồn tại.")
+    
+    if st.button("🏠Về trang chủ"):
+        st.switch_page('ecommerce_app.py')
 
 elif st.session_state.step == 2:
     st.success("✅ Mã xác nhận đã gửi tới email (giả lập).")

@@ -88,6 +88,12 @@ if st.session_state.step == 1:
                 reset_code()
                 st.session_state.step = 2
                 st.rerun()
+        
+    if st.button("❓Đã có tài khoản?"):
+        st.switch_page('pages/2_login.py')
+        
+    if st.button("🏠Về trang chủ"):
+        st.switch_page('ecommerce_app.py')
 
 elif st.session_state.step == 2:
     st.success("✅ Mã xác nhận đã gửi tới email (giả lập).")
@@ -126,4 +132,4 @@ elif st.session_state.step == 3:
             st.rerun()
     with col2:
         if st.button("🏠 Trang chủ", key="go_home"):
-            st.switch_page("home_app.py")
+            st.switch_page("pages/5_home.py")

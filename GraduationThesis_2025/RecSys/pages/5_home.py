@@ -16,6 +16,31 @@ if "customer_id" not in st.session_state or st.session_state["customer_id"] is N
             st.switch_page("pages/1_signin.py")
     st.stop()
 
+option = st.selectbox(
+    "🔽Menu chức năng",
+    (
+        "🏠 Home",
+        "🛒 My cart",
+        "📦 My orders",
+        "👤 Profile",
+        "🔒 Change password",
+        "🚪 Log out"
+    )
+)
+
+if option != "🏠 Home":
+    if option == "🛒 My cart":
+        st.switch_page("pages/7_cart.py")
+    elif option == "📦 My orders":
+        st.switch_page("pages/8_history.py")
+    elif option == "👤 Profile":
+        st.switch_page("pages/6_profile.py")
+    elif option == "🔒 Change password":
+        st.switch_page("pages/4_changepassword.py")
+    elif option == "🚪 Log out":
+        st.session_state.clear()
+        st.switch_page("ecommerce_app.py")
+
 try:
     image_dir = 'C:/Users/ASUS/Desktop/T/ĐAN_KLTN/getImages'
     placeholder_path = os.path.join(image_dir, 'placeholder.jpg')
@@ -28,18 +53,12 @@ try:
     )
 
     query = """
-    SELECT t.product_id, 
-        t.product_name, 
-        t.discounted_price, 
-        t.total_sold, 
-        t.avg_rating, 
-        p.image_url,
-        c.category_id,
-        c.description AS category_description
-    FROM TopSellingProducts t
-    JOIN Product p ON t.product_id = p.product_id
-    JOIN ProductHasCategories phc ON p.product_id = phc.product_id
-    JOIN Category c ON phc.category_id = c.category_id
+        SELECT t.product_id, t.product_name, t.discounted_price, t.total_sold, t.avg_rating, p.image_url, 
+            c.category_id, c.description AS category_description
+        FROM TopSellingProducts t
+        JOIN Product p ON t.product_id = p.product_id
+        JOIN ProductHasCategories phc ON p.product_id = phc.product_id
+        JOIN Category c ON phc.category_id = c.category_id
     """
     df_products = pd.read_sql(query, conn)
 
@@ -60,6 +79,7 @@ print(recommendations.columns)
 if 'visible_count' not in st.session_state:
     st.session_state.visible_count = 10
 
+st.markdown("---")
 search_query = st.text_input("🔍 Tìm kiếm sản phẩm", "")
 
 categories = df_products['category_description'].unique()
@@ -121,9 +141,12 @@ if len(recommendations) > 0:
                     st.markdown(f"🔥 Đã bán: {recommendation['total_sold']}")
                     st.markdown(f"⭐ {recommendation['avg_rating']} sao")
                     st.markdown(f"📦 Danh mục: {recommendation['category_description']}")
+                    if st.button("🔎 Chi tiết", key=f"rcm_detail_{recommendation['product_id']}"):
+                        st.session_state.selected_product_id = recommendation['product_id']
+                        st.switch_page("pages/10_productdetail.py")
 
     if num_show < len(recommendations):
-        if st.button("🔽 Click for more"):
+        if st.button("🔽 Click for more", key=f'rcm_more_btn'):
             st.session_state.visible_count += 10
             st.rerun()
 else:
@@ -152,9 +175,12 @@ if not df_products.empty:
                     st.markdown(f"🔥 Đã bán: {product['total_sold']}")
                     st.markdown(f"⭐ {product['avg_rating']} sao")
                     st.markdown(f"📦 Danh mục: {product['category_description']}")
+                    if st.button("🔎 Chi tiết", key=f"product_detail_{product['product_id']}"):
+                        st.session_state.selected_product_id = product['product_id']
+                        st.switch_page("pages/10_productdetail.py")
 
     if num_show < len(df_products):
-        if st.button("🔽 Click for more"):
+        if st.button("🔽 Click for more", key=f'top_more_btn'):
             st.session_state.visible_count += 10
             st.rerun()
 

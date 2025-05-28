@@ -1,5 +1,9 @@
 import streamlit as st
 import pymysql
+import os
+
+image_dir = 'C:/Users/ASUS/Desktop/T/ĐAN_KLTN/getImages'
+placeholder_path = os.path.join(image_dir, 'placeholder.jpg')
 
 def get_connection():
     return pymysql.connect(
@@ -9,12 +13,6 @@ def get_connection():
         database="eCommerce",
         cursorclass=pymysql.cursors.DictCursor
     )
-
-def get_all_products():
-    conn = get_connection()
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT product_id, name FROM Product")
-        return cursor.fetchall()
 
 def get_product_detail(product_id):
     conn = get_connection()
@@ -70,45 +68,60 @@ def get_product_reviews(product_id):
 
 st.title("📦 Chi tiết sản phẩm")
 
-product_list = get_all_products()
-product_options = {f"{p['name']} ({p['product_id']})": p['product_id'] for p in product_list}
+if 'selected_product_id' not in st.session_state:
+    st.error("Không có sản phẩm nào được chọn.")
+    st.stop()
 
-selected = st.selectbox("Chọn sản phẩm", options=list(product_options.keys()))
+product_id = st.session_state.selected_product_id
+product, categories = get_product_detail(product_id)
 
-if selected:
-    product_id = product_options[selected]
-    product, categories = get_product_detail(product_id)
+if not product:
+    st.warning("Không tìm thấy sản phẩm.")
+    st.stop()
 
-    st.image(product["image_url"], width=250)
-    st.markdown(f"### 🛍️ {product['name']}")
-    st.markdown(f"**Mô tả:** {product['description']}")
-    st.markdown(f"**Giá:** 💸 {product['price']:,} đ")
-    if product["discount"]:
-        st.markdown(f"**Giảm giá:** {product['discount']}%")
-    st.markdown(f"**Số lượng còn:** {product['quantity']}")
-    st.markdown(f"**Đã bán:** {product['sold']}")
-    st.markdown(f"**Đánh giá:** ⭐ {product['rating']}/5")
+# product_list = get_all_products()
+# product_options = {f"{p['name']} ({p['product_id']})": p['product_id'] for p in product_list}
 
-    if categories:
-        st.markdown("**Danh mục:** " + ", ".join(categories))
+# selected = st.selectbox("Chọn sản phẩm", options=list(product_options.keys()))
+image_path = product['image_url']
+if not os.path.exists(image_path):
+    image_path = placeholder_path
+st.image(image_path, width=250)
+st.markdown(f"### 🛍️ {product['name']}")
+st.markdown(f"**Mô tả:** {product['description']}")
+st.markdown(f"**Giá:** 💸 {product['price']:,} đ")
+if product["discount"]:
+    st.markdown(f"**Giảm giá:** {product['discount']}%")
+st.markdown(f"**Số lượng còn:** {product['quantity']}")
+st.markdown(f"**Đã bán:** {product['sold']}")
+st.markdown(f"**Đánh giá:** ⭐ {product['rating']}/5")
+
+if categories:
+    st.markdown("**Danh mục:** " + ", ".join(categories))
+else:
+    st.markdown("**Danh mục:** (Không có)")
+
+if st.button("🛒 Thêm vào giỏ hàng"):
+    if "customer_id" not in st.session_state or st.session_state["customer_id"] is None:
+        st.warning("🔒 Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.")
     else:
-        st.markdown("**Danh mục:** (Không có)")
+        add_to_cart(st.session_state["customer_id"], product_id)
+        st.success("✅ Đã thêm vào giỏ hàng!")
 
-    if st.button("🛒 Thêm vào giỏ hàng"):
-        if "customer_id" not in st.session_state or st.session_state["customer_id"] is None:
-            st.warning("🔒 Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.")
-        else:
-            add_to_cart(st.session_state["customer_id"], product_id)
-            st.success("✅ Đã thêm vào giỏ hàng!")
-
-    st.markdown("---")
-    st.subheader("📝 Đánh giá từ người mua")
-
-    reviews = get_product_reviews(product_id)
-
-    if reviews:
-        for r in reviews:
-            stars = "⭐" * r["rating"] + "☆" * (5 - r["rating"])
-            st.markdown(f"- {stars} &nbsp;&nbsp;`{r['created_at'].strftime('%Y-%m-%d %H:%M')}`  \n{r['content']}")
+if st.button("🔙 Quay lại"):
+    if "customer_id" in st.session_state and st.session_state["customer_id"] is not None:
+        st.switch_page("pages/5_home.py")
     else:
-        st.info("Chưa có đánh giá nào cho sản phẩm này.")
+        st.switch_page("ecommerce_app.py")
+
+st.markdown("---")
+st.subheader("📝 Đánh giá từ người mua")
+
+reviews = get_product_reviews(product_id)
+
+if reviews:
+    for r in reviews:
+        stars = "⭐" * r["rating"] + "☆" * (5 - r["rating"])
+        st.markdown(f"- {stars} &nbsp;&nbsp;`{r['created_at'].strftime('%Y-%m-%d %H:%M')}`  \n{r['content']}")
+else:
+    st.info("Chưa có đánh giá nào cho sản phẩm này.")

@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pymysql
+from datetime import datetime
 
 def get_connection():
     return pymysql.connect(
@@ -81,9 +82,26 @@ def get_order_statuses():
 
 def update_order_status(order_id, new_status):
     conn = get_connection()
-    with conn.cursor() as cursor:
-        cursor.execute("UPDATE Orders SET order_status = %s WHERE order_id = %s", (new_status, order_id))
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT description FROM OrderStatus WHERE status_id = %s", (new_status,))
+            new_status = cursor.fetchone()[0]
+
+            if new_status.lower() == 'đã gaio hàng':
+                cursor.execute("""
+                    UPDATE Orders 
+                    SET order_status = 'SHIPPED', shipped_date = %s
+                    WHERE order_id = %s
+                """, (datetime.now(), order_id))
+            else:
+                cursor.execute("""
+                    UPDATE Orders 
+                    SET order_status = %s
+                    WHERE order_id = %s
+                """, (new_status, order_id))
         conn.commit()
+    finally:
+        conn.close()
 
 st.title("📦 Quản lý đơn hàng")
 
@@ -140,3 +158,7 @@ with tab2:
                 st.success("Đã cập nhật trạng thái đơn hàng.")
     else:
         st.info("Không có đơn hàng để chọn.")
+
+st.markdown("---")
+if st.button("🏠Về trang chủ"):
+    st.switch_page("pages/17_homeadmin.py")
