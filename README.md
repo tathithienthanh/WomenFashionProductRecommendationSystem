@@ -1,9 +1,9 @@
 # Women's Fashion Product Recommendation System
-A project for Major Project Subject and Graduation Thesis Subject at the university. (Not yet completed)
+A project for Major Project Subject and Graduation Thesis Subject at Ho Chi Minh Open Nniversity. (Not yet completed)
 
 *Time:* 
   * *Major project (đồ án ngành): Sept 2024 - Jan 2025*
-  * *Graduation Thesis (khóa luận tốt nghiệp): Feb 2025 - May 2025*
+  * *Graduation Thesis (khóa luận tốt nghiệp): Feb 2025 - June 2025*
 
 *Language: Vietnamese*
 
@@ -43,17 +43,18 @@ With the rapid growth of e-commerce, the demand for online fashion shopping, par
 * Images used in reports are stored in folder `Images`.
 
 # Usage
-To use this project, ensure you update file paths if you intend to import or load datasets using the provided code.
+* To use this project, ensure you update file paths if you intend to import or load datasets using the provided code.
+* To launch the system interface, run the command in cmd: `streamlit run [local_path]/RecSys/ecommerce_app.py` *(ensure Streamlit is installed)*.
 
 # Technologies and techniques
 * Web Scraping: Using Selenium for automated data extraction.
 * Data Processing: Preprocessing techniques to clean and prepare data.
 * Clustering: Implementing K-Means and DBSCAN for clustering product types.
-* Natural Language Processing (NLP): Analyzing customer feedback.
-* Visualization: Generating insights using data visualization.
+* Natural Language Processing (NLP): Analyzing customer feedback and classifying categories of products.
+* Visualization: Generating insights using data visualization by Matplotlib, Seaborn and Plotly.
 * System Design: Designing the architecture for the recommendation system.
-* Web Performance: Streamlit
-* Database: MySQL
+* Web Performance: UI built with Streamlit
+* Database: Data retrieval using PyMySQL to interact with a MySQL database.
   
 # Notes
 * The report included in this repository is for reference purposes only. Please do not edit or reuse it for any other purpose.
