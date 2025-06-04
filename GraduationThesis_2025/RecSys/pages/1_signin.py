@@ -48,6 +48,7 @@ def insert_user(last_name, first_name, email, password, phone_number, address):
         conn.commit()
     finally:
         conn.close()
+    return customer_id
 
 def reset_code():
     st.session_state.confirm_code = str(random.randint(100000, 999999))
@@ -106,10 +107,8 @@ elif st.session_state.step == 2:
         if verify:
             if input_code == st.session_state.confirm_code:
                 data = st.session_state.form_data
-                insert_user(
-                    data["last_name"], data["first_name"], data["email"],
-                    data["password"], data["phone_number"], data["address"]
-                )
+                user_id = insert_user(data["last_name"], data["first_name"], data["email"], data["password"], data["phone_number"], data["address"])
+                st.session_state.user_id = user_id
                 st.session_state.step = 3
                 st.rerun()
             else:
@@ -122,7 +121,7 @@ elif st.session_state.step == 2:
 
 elif st.session_state.step == 3:
     st.balloons()
-    st.success("🎉 Đăng ký thành công!")
+    st.success(f"🎉 Đăng ký thành công tài khoản **{st.session_state.user_id}**!")
     
     col1, col2 = st.columns(2)
     with col1:

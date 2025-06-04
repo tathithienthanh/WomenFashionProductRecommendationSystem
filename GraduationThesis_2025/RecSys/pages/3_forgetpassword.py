@@ -33,10 +33,6 @@ def update_customer_password(customer_id, new_password):
 def generate_code(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
-if "customer_id" not in st.session_state:
-    st.warning("⚠️ Vui lòng đăng nhập để sử dụng chức năng này.")
-    st.stop()
-
 if "step" not in st.session_state:
     st.session_state.step = 1
 if "confirm_code" not in st.session_state:
@@ -48,17 +44,20 @@ st.title("🔐 Quên mật khẩu")
 
 if st.session_state.step == 1:
     with st.form("email_form"):
+        customer_id = st.text_input("🆔 Nhập mã khách hàng:")
         email = st.text_input("📧 Nhập email đã đăng ký:")
         submit_email = st.form_submit_button("Gửi mã xác nhận")
 
         if submit_email:
             user = get_customer_by_email(email)
-            if user:
+            if user and user["customer_id"] == customer_id:
                 st.session_state.confirm_code = generate_code()
-                st.session_state.customer_id = user["customer_id"]
+                st.session_state.customer_id = customer_id
                 st.session_state.step = 2
                 st.success("✅ Mã xác nhận đã được gửi tới email (giả lập).")
                 st.rerun()
+            elif user:
+                st.error("❌ Mã khách hàng không khớp với email.")
             else:
                 st.error("❌ Email không tồn tại.")
     
