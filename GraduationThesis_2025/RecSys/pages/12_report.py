@@ -3,7 +3,7 @@ import pymysql
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
-import plotly.express as px
+import plotly.express as px # type: ignore
 from wordcloud import WordCloud
 
 def get_connection():

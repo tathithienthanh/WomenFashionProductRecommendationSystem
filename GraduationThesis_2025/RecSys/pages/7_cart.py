@@ -36,6 +36,9 @@ def remove_from_cart(customer_id, product_id):
     finally:
         conn.close()
 
+if st.button("🏠Về trang chủ"):
+    st.switch_page("pages/5_home.py")
+
 if "logged_in_user" not in st.session_state:
     st.warning("Vui lòng đăng nhập để xem giỏ hàng.")
     st.stop()
@@ -70,7 +73,3 @@ else:
 
     if st.button("🧾 Tiến hành đặt hàng"):
         st.switch_page('pages/9_order.py')
-    
-    st.markdown("---")
-    if st.button("🏠Về trang chủ"):
-        st.switch_page('pages/5_home.py')

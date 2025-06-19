@@ -1,3 +1,4 @@
+import logging
 import streamlit as st
 import pymysql
 import random
@@ -204,6 +205,10 @@ if st.button("✅ Xác nhận đặt hàng"):
 
 st.markdown("---")
 st.subheader("🛒 Có thể bạn sẽ thích")
+
+if 'selected_product_id' not in st.session_state:
+    st.session_state.selected_product_id = None
+
 num_cols = 5
 
 product_ids = [item['product_id'] for item in cart_items]
@@ -212,7 +217,6 @@ for pid in product_ids[:2]:
     suggested.extend(get_similar_products(pid, 3))
 unique_suggested = {p['product_id']: p for p in suggested}
 suggested = list(unique_suggested.values())[:5]
-print(suggested)
 cols = st.columns(num_cols)
 for idx, p in enumerate(suggested):
     image_path = p.get('image_url') or placeholder_path
@@ -227,13 +231,13 @@ for idx, p in enumerate(suggested):
         st.markdown(f"⭐ {p.get('rating', 'N/A')} sao")
         category = p.get('category', {})
         st.markdown(f"📦 Danh mục: {category.get('description', 'Không rõ')}")
-        if st.button("🔎 Chi tiết", key=f"detail_{p['product_id']}"):
+        if st.button("🔎 Chi tiết", key=f"similar_detail_{p['product_id']}"):
             st.session_state['selected_product_id'] = p['product_id']
+            print("Selected: {0}".format(st.session_state['selected_product_id']))
             st.switch_page("pages/10_productdetail.py")
 
 
 suggested = get_random_products(5)
-print(suggested)
 cols = st.columns(num_cols)
 for idx, p in enumerate(suggested):
     image_path = p.get('image_url') or placeholder_path
@@ -247,6 +251,8 @@ for idx, p in enumerate(suggested):
         st.markdown(f"🔥 Đã bán: {p.get('sold', 'N/A')}")
         st.markdown(f"⭐ {p.get('rating', 'N/A')} sao")
         st.markdown(f"📦 Danh mục: {p.get('category_description', {'Không rõ'})}")
-        if st.button("🔎 Chi tiết", key=f"detail_{p['product_id']}"):
-            st.session_state['selected_product_id'] = p['product_id']
+        product_id = p['product_id']
+        key_button = f"random_detail_{product_id}"
+        if st.button("🔎 Chi tiết", key=key_button):
+            st.session_state.selected_product_id = product_id
             st.switch_page("pages/10_productdetail.py")

@@ -30,7 +30,7 @@ def validate_admin_login(admin_id, password):
 st.title("🛠️ Đăng nhập quản trị viên")
 
 with st.form("admin_login_form"):
-    admin_id = st.text_input("🆔 Mã Admin (VD: A001)")
+    admin_id = st.text_input("🆔 Mã Admin (VD: C001)")
     password = st.text_input("🔒 Mật khẩu", type="password")
     submit = st.form_submit_button("Đăng nhập")
 

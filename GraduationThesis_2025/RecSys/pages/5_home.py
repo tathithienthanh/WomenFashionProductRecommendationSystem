@@ -41,6 +41,8 @@ if option != "🏠 Home":
         st.session_state.clear()
         st.switch_page("ecommerce_app.py")
 
+df_products = pd.DataFrame()
+
 try:
     image_dir = 'C:/Users/ASUS/Desktop/T/ĐAN_KLTN/getImages'
     placeholder_path = os.path.join(image_dir, 'placeholder.jpg')
@@ -53,12 +55,13 @@ try:
     )
 
     query = """
-        SELECT t.product_id, t.product_name, t.discounted_price, t.total_sold, t.avg_rating, p.image_url, 
-            c.category_id, c.description AS category_description
-        FROM TopSellingProducts t
-        JOIN Product p ON t.product_id = p.product_id
+        SELECT p.product_id, p.name, p.discount, p.sold, p.rating, p.image_url, 
+            c.category_id, c.description AS category_description,
+            ROUND((p.price * (1 - IFNULL(p.discount, 0))), 2) AS discounted_price
+        FROM Product p
         JOIN ProductHasCategories phc ON p.product_id = phc.product_id
         JOIN Category c ON phc.category_id = c.category_id
+        ORDER BY p.sold DESC, p.rating DESC;
     """
     df_products = pd.read_sql(query, conn)
 
@@ -71,6 +74,7 @@ finally:
         conn.close()
 
 df_products = df_products.drop_duplicates(subset='product_id')
+print(len(df_products))
 
 recommendations = recommend_items_for_user(st.session_state["customer_id"], top_n=20)
 recommendations = recommendations or df_products.head(20)
@@ -86,8 +90,8 @@ categories = df_products['category_description'].unique()
 selected_categories = st.multiselect("🔖 Lọc theo loại sản phẩm", categories, default=categories)
 
 if not df_products.empty:
-    min_rating_value = df_products['avg_rating'].min()
-    max_rating_value = df_products['avg_rating'].max()
+    min_rating_value = df_products['rating'].min()
+    max_rating_value = df_products['rating'].max()
 
     min_rating, max_rating = st.slider(
         "🌟 Lọc theo đánh giá sao",
@@ -106,16 +110,16 @@ min_price, max_price = st.slider(
 
 if not df_products.empty:
     if search_query:
-        df_products = df_products[df_products['product_name'].str.contains(search_query, case=False, na=False)]
-        recommendations = recommendations[recommendations['product_name'].str.contains(search_query, case=False, na=False)]
+        df_products = df_products[df_products['name'].str.contains(search_query, case=False, na=False)]
+        recommendations = recommendations[recommendations['name'].str.contains(search_query, case=False, na=False)]
 
     if selected_categories:
         df_products = df_products[df_products['category_description'].isin(selected_categories)]
         recommendations = recommendations[recommendations['category_description'].isin(selected_categories)]
 
-    df_products = df_products[(df_products['avg_rating'] >= min_rating) & (df_products['avg_rating'] <= max_rating)]
+    df_products = df_products[(df_products['rating'] >= min_rating) & (df_products['rating'] <= max_rating)]
     df_products = df_products[(df_products['discounted_price'] >= min_price) & (df_products['discounted_price'] <= max_price)]
-    recommendations = recommendations[(recommendations['avg_rating'] >= min_rating) & (recommendations['avg_rating'] <= max_rating)]
+    recommendations = recommendations[(recommendations['rating'] >= min_rating) & (recommendations['rating'] <= max_rating)]
     recommendations = recommendations[(recommendations['discounted_price'] >= min_price) & (recommendations['discounted_price'] <= max_price)]
 
 if len(recommendations) > 0:
@@ -136,10 +140,10 @@ if len(recommendations) > 0:
 
                 with cols[j]:
                     st.image(image_path, width=150)
-                    st.markdown(f"**{recommendation['product_name']}**")
+                    st.markdown(f"**{recommendation['name']}**")
                     st.markdown(f"💰 {recommendation['discounted_price']:,} VND")
-                    st.markdown(f"🔥 Đã bán: {recommendation['total_sold']}")
-                    st.markdown(f"⭐ {recommendation['avg_rating']} sao")
+                    st.markdown(f"🔥 Đã bán: {recommendation['sold']}")
+                    st.markdown(f"⭐ {recommendation['rating']} sao")
                     st.markdown(f"📦 Danh mục: {recommendation['category_description']}")
                     if st.button("🔎 Chi tiết", key=f"rcm_detail_{recommendation['product_id']}"):
                         st.session_state.selected_product_id = recommendation['product_id']
@@ -170,10 +174,10 @@ if not df_products.empty:
 
                 with cols[j]:
                     st.image(image_path, width=150)
-                    st.markdown(f"**{product['product_name']}**")
+                    st.markdown(f"**{product['name']}**")
                     st.markdown(f"💰 {product['discounted_price']:,} VND")
-                    st.markdown(f"🔥 Đã bán: {product['total_sold']}")
-                    st.markdown(f"⭐ {product['avg_rating']} sao")
+                    st.markdown(f"🔥 Đã bán: {product['sold']}")
+                    st.markdown(f"⭐ {product['rating']} sao")
                     st.markdown(f"📦 Danh mục: {product['category_description']}")
                     if st.button("🔎 Chi tiết", key=f"product_detail_{product['product_id']}"):
                         st.session_state.selected_product_id = product['product_id']
