@@ -1,5 +1,5 @@
 # Women's Fashion Product Recommendation System
-A project for Major Project Subject and Graduation Thesis Subject at Ho Chi Minh Open Nniversity. (Not yet completed)
+A project for Major Project Subject and Graduation Thesis Subject at Ho Chi Minh Open University. (Not yet completed)
 
 *Time:* 
   * *Major project (đồ án ngành): Sept 2024 - Jan 2025*
