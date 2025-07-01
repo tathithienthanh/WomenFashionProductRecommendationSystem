@@ -38,8 +38,7 @@ CREATE VIEW TopSellingProducts AS
 	LEFT JOIN Orders o ON od.order_id = o.order_id AND o.order_status = 'shipped'
 	LEFT JOIN Review r ON p.product_id = r.product_id
 	GROUP BY p.product_id
-	ORDER BY total_sold DESC, total_revenue DESC
-	LIMIT 50;
+	ORDER BY total_sold DESC, total_revenue DESC;
     
 CREATE VIEW ProductReviewsSummary AS
     SELECT p.product_id, p.name AS product_name, COUNT(*) AS total_reviews, ROUND(AVG(r.rating), 1) AS avg_rating, 
