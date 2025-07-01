@@ -59,3 +59,28 @@ With the rapid growth of e-commerce, the demand for online fashion shopping, par
 # Notes
 * The report included in this repository is for reference purposes only. Please do not edit or reuse it for any other purpose.
 * All code and files are created by me. If you reuse any part of the code, please add appropriate citations.
+
+# Reference
+[1] T. T. T. Thanh, “Phân tích xu hướng mua hàng của khách hàng trên các trang thương mại điện tử,” 2024.
+
+[2] D. Nichter, Efficient MySQL Performance: Best Practices and Techniques, O'Reilly, 2022.
+
+[3] “MySQL,” Oracle, [Trực tuyến]. Available: https://www.mysql.com/.
+
+[4] I. Naoki, “PyMySQL documentation,” 2023. [Trực tuyến]. Available: https://pymysql.readthedocs.io/en/latest/index.html.
+
+[5] Streamlit, “Streamlit,” Snowflake Inc., [Trực tuyến]. Available: https://streamlit.io/.
+
+[6] U. S. K. A. H. I. I. F. M. A. T. &. L. S. Javed, “A Review of Content-Based and Context-Based,” International Journal of Emerging Technologies in Learning, tập 16, 2021.
+
+[7] S. Ari Nurcahya, “Content-based recommender system architecture for similar ecommerce products,” Jurnal Informatika, tập 14, 2020.
+
+[8] D. G. Z. X. K. S. Antaris Stefanos, “Content-Based Recommendation Systems,” 2008.
+
+[9] M. d. G. a. G. S. Pasquale Lops, “Content-based recommender systems: State of the art and trends,” Recommender systems handbook, pp. 73-105, 2011.
+
+[10] H. Tiep, “Bài 24: Neighborhood-Based Collaborative Filtering,” 2017. [Trực tuyến]. Available: https://machinelearningcoban.com/2017/05/24/collaborativefiltering/#-user-usercollaborative-filtering.
+
+[11] Google Developers, “Matrix factorization,” [Trực tuyến]. Available: https://developers.google.com/machinelearning/recommendation/collaborative/matrix?utm_source=chatgpt.com#choosing110_the_objective_function.
+
+[12] J. K. J. R. J. Ben Schafer, “Recommender Systems in E-Commerce,” Proceedings of the 1st ACM conference on Electronic commerce, pp. 158-166, 1999.
